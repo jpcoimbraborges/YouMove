@@ -124,6 +124,16 @@ export async function syncWorkoutSessions(): Promise<SyncResult> {
 // SINGLE SESSION SYNC
 // ============================================
 
+function safeInt(val: any): number {
+    if (typeof val === 'number') return Math.round(val);
+    if (!val) return 0;
+
+    // Convert "8-12" -> 8, "45 seg" -> 45
+    const str = String(val).trim();
+    const match = str.match(/^(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+}
+
 async function syncSingleSession(session: WorkoutSession): Promise<void> {
     const { user_id, id: session_id } = session;
 
@@ -148,10 +158,10 @@ async function syncSingleSession(session: WorkoutSession): Promise<void> {
         // Fix: Ensure started_at is not null. Fallback to completed_at minus duration, or just completed_at
         started_at: session.started_at || (session.completed_at ? new Date(new Date(session.completed_at).getTime() - (durationSeconds * 1000)).toISOString() : new Date().toISOString()),
         completed_at: session.completed_at || new Date().toISOString(),
-        duration_seconds: durationSeconds,                    // SECONDS not minutes!
-        total_sets: session.total_sets_completed || 0,        // Column is "total_sets"
-        total_reps: session.total_reps_completed || 0,        // Column is "total_reps"  
-        total_volume: session.total_volume_kg || 0,           // Column is "total_volume"
+        duration_seconds: safeInt(durationSeconds),           // SECONDS not minutes!
+        total_sets: safeInt(session.total_sets_completed || 0),        // Column is "total_sets"
+        total_reps: safeInt(session.total_reps_completed || 0),        // Column is "total_reps"  
+        total_volume: safeInt(session.total_volume_kg || 0),           // Column is "total_volume"
         notes: null,
         // rating: session.average_rpe ? Math.round(session.average_rpe / 2) : null, // RPE 1-10 -> Rating 1-5
     };
@@ -220,9 +230,10 @@ async function syncSingleSession(session: WorkoutSession): Promise<void> {
                 user_id,
                 exercise_id: exercise.exercise_id,
                 exercise_order: exercise.order,
-                sets_data: setData,
-                total_volume_kg: totalVolume,
-                total_reps: completedSets.reduce((a, s) => a + (s.actual_reps || 0), 0),
+                exercise_order: exercise.order,
+                sets: setData,
+                total_volume_kg: safeInt(totalVolume),
+                total_reps: safeInt(completedSets.reduce((a, s) => a + safeInt(s.actual_reps || 0), 0)),
                 max_weight_kg: maxWeight,
                 notes: exercise.notes,
             }, {
