@@ -283,7 +283,7 @@ export default function HistoryPage() {
                     </div>
 
                     {/* Calendar Grid */}
-                    <div className="grid grid-cols-7 gap-2">
+                    <div key={calendarDate.toString()} className="grid grid-cols-7 gap-2 lg:gap-3">
                         {getCalendarDays().map((day, i) => {
                             const hasWorkout = day ? hasWorkoutOnDay(day) : false;
                             const isToday = day === new Date().getDate() &&
@@ -295,19 +295,27 @@ export default function HistoryPage() {
                                     key={i}
                                     onClick={() => handleDayClick(day)}
                                     disabled={!day}
+                                    style={{ animationDelay: `${i * 30}ms`, animationFillMode: 'both' }}
                                     className={`
-                                        aspect-square rounded-xl flex items-center justify-center text-sm font-medium relative
-                                        transition-all duration-300
-                                        ${!day ? 'invisible' : 'bg-black/20 hover:bg-black/40'}
-                                        ${hasWorkout ? 'ring-2 ring-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'text-gray-400'}
-                                        ${isToday && !hasWorkout ? 'ring-1 ring-gray-600' : ''}
-                                        ${selectedDay === day ? 'scale-95 bg-blue-500/20' : ''}
+                                        aspect-square rounded-xl lg:rounded-2xl flex flex-col items-center justify-center text-sm font-medium relative
+                                        transition-all duration-300 animate-in fade-in zoom-in-50
+                                        ${!day ? 'invisible pointer-events-none' : 'hover:scale-105 active:scale-95 z-0 hover:z-10'}
+                                        ${hasWorkout
+                                            ? 'bg-gradient-to-br from-blue-600 to-blue-400 text-white shadow-[0_4px_20px_rgba(59,130,246,0.4)] border border-blue-400/20'
+                                            : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:border-white/10'}
+                                        ${isToday && !hasWorkout ? 'bg-blue-500/10 text-blue-200 ring-1 ring-blue-500/30' : ''}
+                                        ${selectedDay === day ? 'ring-2 ring-white scale-95 shadow-lg' : ''}
                                     `}
                                 >
-                                    {day}
-                                    {hasWorkout && (
-                                        <div className="absolute inset-0 rounded-xl border-2 border-blue-500 animate-pulse" />
+                                    <span className={hasWorkout ? 'font-bold text-base lg:text-lg drop-shadow-md' : ''}>{day}</span>
+
+                                    {/* Today Indicator */}
+                                    {isToday && (
+                                        <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${hasWorkout ? 'bg-white' : 'bg-blue-400'} shadow-[0_0_8px_currentColor]`} />
                                     )}
+
+                                    {/* Workout Data (Desktop Only - Optional mini-dots for multiple workouts) */}
+                                    {/* We could add logic here if we wanted to show multiple dots for multiple sessions */}
                                 </button>
                             );
                         })}
