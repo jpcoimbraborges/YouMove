@@ -13,13 +13,27 @@ import {
     Loader2,
     Library,
     Filter,
-    X
+    X,
+    TrendingUp,
+    Flame,
+    Zap,
+    Activity,
+    Move
 } from 'lucide-react';
 import { TemplateCard } from '@/components/workout/TemplateCard';
 import { TemplateDetailModal } from '@/components/workout/TemplateDetailModal';
 import type { WorkoutTemplate, TemplateFilters } from '@/types/template.types';
 import { TEMPLATE_CATEGORIES, DIFFICULTY_LEVELS } from '@/types/template.types';
 import { useAuth } from '@/contexts/AuthContext';
+
+const CATEGORY_ICONS: Record<string, any> = {
+    strength: Dumbbell,
+    hypertrophy: TrendingUp,
+    endurance: Activity,
+    weight_loss: Flame,
+    functional: Zap,
+    flexibility: Move
+};
 
 export default function TemplatesPage() {
     const router = useRouter();
@@ -171,22 +185,25 @@ export default function TemplatesPage() {
                                 <div>
                                     <label className="text-xs text-gray-400 mb-2 block">Categoria</label>
                                     <div className="flex flex-wrap gap-2">
-                                        {Object.entries(TEMPLATE_CATEGORIES).map(([key, val]) => (
-                                            <button
-                                                key={key}
-                                                onClick={() => setFilters({
-                                                    ...filters,
-                                                    category: filters.category === key ? undefined : key
-                                                })}
-                                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
-                                                    ${filters.category === key
-                                                        ? 'bg-blue-600 text-white'
-                                                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                                                    }`}
-                                            >
-                                                {val.icon} {val.label}
-                                            </button>
-                                        ))}
+                                        {Object.entries(TEMPLATE_CATEGORIES).map(([key, val]) => {
+                                            const Icon = CATEGORY_ICONS[key] || Dumbbell;
+                                            return (
+                                                <button
+                                                    key={key}
+                                                    onClick={() => setFilters({
+                                                        ...filters,
+                                                        category: filters.category === key ? undefined : key
+                                                    })}
+                                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2
+                                                        ${filters.category === key
+                                                            ? 'bg-blue-600 text-white'
+                                                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                                        }`}
+                                                >
+                                                    <Icon size={14} /> {val.label}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 

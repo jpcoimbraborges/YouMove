@@ -1,8 +1,28 @@
 'use client';
 
-import { Clock, Users, Dumbbell, Star, Flame, Zap, Award } from 'lucide-react';
+import {
+    Clock,
+    Users,
+    Dumbbell,
+    Star,
+    Flame,
+    Zap,
+    Award,
+    TrendingUp,
+    Activity,
+    Move
+} from 'lucide-react';
 import type { WorkoutTemplate } from '@/types/template.types';
 import { TEMPLATE_CATEGORIES, DIFFICULTY_LEVELS } from '@/types/template.types';
+
+const CATEGORY_ICONS: Record<string, any> = {
+    strength: Dumbbell,
+    hypertrophy: TrendingUp,
+    endurance: Activity,
+    weight_loss: Flame,
+    functional: Zap,
+    flexibility: Move
+};
 
 interface TemplateCardProps {
     template: WorkoutTemplate;
@@ -15,24 +35,27 @@ export function TemplateCard({ template, onClick }: TemplateCardProps) {
 
     const getDifficultyColorClass = (color: string) => {
         const colors: Record<string, string> = {
-            green: 'bg-green-500/20 text-green-400 border-green-500/30',
-            yellow: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-            red: 'bg-red-500/20 text-red-400 border-red-500/30'
+            green: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+            yellow: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+            red: 'bg-rose-500/10 text-rose-400 border-rose-500/20'
         };
         return colors[color] || colors.green;
     };
 
-    const getCategoryColorClass = (color: string) => {
-        const colors: Record<string, string> = {
-            red: 'from-red-600/20 to-red-900/20',
-            purple: 'from-purple-600/20 to-purple-900/20',
-            blue: 'from-blue-600/20 to-blue-900/20',
-            orange: 'from-orange-600/20 to-orange-900/20',
-            yellow: 'from-yellow-600/20 to-yellow-900/20',
-            green: 'from-green-600/20 to-green-900/20'
+    const getCategoryStyles = (color: string) => {
+        const styles: Record<string, { bg: string, icon: string }> = {
+            red: { bg: 'from-rose-500/20 via-rose-500/5 to-transparent', icon: 'text-rose-400' },
+            purple: { bg: 'from-violet-500/20 via-violet-500/5 to-transparent', icon: 'text-violet-400' },
+            blue: { bg: 'from-blue-500/20 via-blue-500/5 to-transparent', icon: 'text-blue-400' },
+            orange: { bg: 'from-orange-500/20 via-orange-500/5 to-transparent', icon: 'text-orange-400' },
+            yellow: { bg: 'from-amber-500/20 via-amber-500/5 to-transparent', icon: 'text-amber-400' },
+            green: { bg: 'from-emerald-500/20 via-emerald-500/5 to-transparent', icon: 'text-emerald-400' }
         };
-        return colors[color] || colors.blue;
+        return styles[color] || styles.blue;
     };
+
+    const Icon = CATEGORY_ICONS[template.category] || Dumbbell;
+    const styles = getCategoryStyles(categoryInfo.color);
 
     return (
         <div
@@ -50,11 +73,13 @@ export function TemplateCard({ template, onClick }: TemplateCardProps) {
             )}
 
             {/* Header with Gradient */}
-            <div className={`h-24 bg-gradient-to-br ${getCategoryColorClass(categoryInfo.color)} flex items-center justify-center relative`}>
-                <span className="text-4xl">{categoryInfo.icon}</span>
+            <div className={`h-32 bg-gradient-to-br ${styles.bg} flex items-center justify-center relative p-6 transition-all duration-500 group-hover:scale-105 group-hover:opacity-80`}>
+                <div className={`p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg group-hover:scale-110 transition-transform duration-300 ${styles.icon}`}>
+                    <Icon size={32} strokeWidth={1.5} />
+                </div>
 
                 {/* Category Tag */}
-                <div className="absolute bottom-3 right-3 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-sm text-xs font-medium text-white">
+                <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-sm border border-white/5 text-[10px] font-medium text-gray-300 uppercase tracking-wider">
                     {categoryInfo.label}
                 </div>
             </div>
