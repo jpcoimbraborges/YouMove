@@ -134,6 +134,10 @@ function safeInt(val: any): number {
     return match ? parseInt(match[1], 10) : 0;
 }
 
+function isValidUUID(uuid: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid);
+}
+
 async function syncSingleSession(session: WorkoutSession): Promise<void> {
     const { user_id, id: session_id } = session;
 
@@ -189,7 +193,22 @@ async function syncSingleSession(session: WorkoutSession): Promise<void> {
 
     console.log('✅ Session synced successfully');
 
-    // 2. Upsert workout logs for each exercise
+    console.log('✅ Session synced successfully');
+
+    // 2. Clear existing logs for this session (to avoid duplicates/conflicts with invalid legacy IDs)
+    const { error: deleteError } = await supabase
+        .from('workout_logs')
+        .delete()
+        .eq('session_id', session_id);
+
+    if (deleteError) {
+        // If clean up fails, we might have issues, but let's try to proceed or just log warning
+        console.warn('⚠️ Could not clear old logs:', deleteError);
+    }
+
+    // 3. Insert workout logs
+    const logsToInsert = [];
+
     for (const exercise of session.exercises) {
         if (exercise.skipped) continue;
 
@@ -222,25 +241,30 @@ async function syncSingleSession(session: WorkoutSession): Promise<void> {
                 .map(s => s.actual_weight_kg!)
         ) || null;
 
+        // Use valid exercise_id or null
+        const validExerciseId = isValidUUID(exercise.exercise_id) ? exercise.exercise_id : null;
+
+        logsToInsert.push({
+            // Let DB generate ID for the log entry (since local exercise.id might be 'exercise-0')
+            session_id,
+            user_id,
+            exercise_id: validExerciseId,
+            exercise_order: exercise.order,
+            sets: setData,
+            total_volume_kg: safeInt(totalVolume),
+            total_reps: safeInt(completedSets.reduce((a, s) => a + safeInt(s.actual_reps || 0), 0)),
+            max_weight_kg: maxWeight,
+            notes: exercise.notes,
+        });
+    }
+
+    if (logsToInsert.length > 0) {
         const { error: logError } = await supabase
             .from('workout_logs')
-            .upsert({
-                id: exercise.id, // Using exercise id as log id
-                session_id,
-                user_id,
-                exercise_id: exercise.exercise_id,
-                exercise_order: exercise.order,
-                sets: setData,
-                total_volume_kg: safeInt(totalVolume),
-                total_reps: safeInt(completedSets.reduce((a, s) => a + safeInt(s.actual_reps || 0), 0)),
-                max_weight_kg: maxWeight,
-                notes: exercise.notes,
-            }, {
-                onConflict: 'id',
-            });
+            .insert(logsToInsert);
 
         if (logError) {
-            throw new Error(`Log sync failed for ${exercise.exercise_name}: ${logError.message}`);
+            throw new Error(`Log insert failed: ${logError.message}`);
         }
     }
 
