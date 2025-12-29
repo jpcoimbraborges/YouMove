@@ -1,9 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Clock, Dumbbell, Users, Play, Star, CheckCircle2, ChevronRight } from 'lucide-react';
+import {
+    X, Clock, Dumbbell, Users, Play, Star, CheckCircle2, ChevronRight,
+    TrendingUp, Activity, Flame, Zap, Move
+} from 'lucide-react';
 import type { WorkoutTemplate, TemplateExercise } from '@/types/template.types';
 import { TEMPLATE_CATEGORIES, DIFFICULTY_LEVELS } from '@/types/template.types';
+
+const CATEGORY_ICONS: Record<string, any> = {
+    strength: Dumbbell,
+    hypertrophy: TrendingUp,
+    endurance: Activity,
+    weight_loss: Flame,
+    functional: Zap,
+    flexibility: Move
+};
 
 interface TemplateDetailModalProps {
     template: WorkoutTemplate;
@@ -32,12 +44,27 @@ export function TemplateDetailModal({ template, onClose, onUseTemplate }: Templa
 
     const getDifficultyColorClass = (color: string) => {
         const colors: Record<string, string> = {
-            green: 'bg-green-500/20 text-green-400',
-            yellow: 'bg-yellow-500/20 text-yellow-400',
-            red: 'bg-red-500/20 text-red-400'
+            green: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+            yellow: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+            red: 'bg-rose-500/10 text-rose-400 border-rose-500/20'
         };
         return colors[color] || colors.green;
     };
+
+    const getCategoryStyles = (color: string) => {
+        const styles: Record<string, { bg: string, icon: string, border: string }> = {
+            red: { bg: 'bg-rose-500/10', icon: 'text-rose-400', border: 'border-rose-500/20' },
+            purple: { bg: 'bg-violet-500/10', icon: 'text-violet-400', border: 'border-violet-500/20' },
+            blue: { bg: 'bg-blue-500/10', icon: 'text-blue-400', border: 'border-blue-500/20' },
+            orange: { bg: 'bg-orange-500/10', icon: 'text-orange-400', border: 'border-orange-500/20' },
+            yellow: { bg: 'bg-amber-500/10', icon: 'text-amber-400', border: 'border-amber-500/20' },
+            green: { bg: 'bg-emerald-500/10', icon: 'text-emerald-400', border: 'border-emerald-500/20' }
+        };
+        return styles[color] || styles.blue;
+    };
+
+    const Icon = CATEGORY_ICONS[template.category] || Dumbbell;
+    const styles = getCategoryStyles(categoryInfo.color);
 
     // Calculate total sets
     const totalSets = template.exercises.reduce((acc: number, ex: TemplateExercise) => acc + ex.sets, 0);
@@ -65,8 +92,8 @@ export function TemplateDetailModal({ template, onClose, onUseTemplate }: Templa
                     </button>
 
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 flex items-center justify-center text-3xl">
-                            {categoryInfo.icon}
+                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border ${styles.bg} ${styles.border}`}>
+                            <Icon size={32} className={styles.icon} strokeWidth={1.5} />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">

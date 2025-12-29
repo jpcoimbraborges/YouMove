@@ -43,13 +43,13 @@ export function TemplateCard({ template, onClick }: TemplateCardProps) {
     };
 
     const getCategoryStyles = (color: string) => {
-        const styles: Record<string, { bg: string, icon: string }> = {
-            red: { bg: 'from-rose-500/20 via-rose-500/5 to-transparent', icon: 'text-rose-400' },
-            purple: { bg: 'from-violet-500/20 via-violet-500/5 to-transparent', icon: 'text-violet-400' },
-            blue: { bg: 'from-blue-500/20 via-blue-500/5 to-transparent', icon: 'text-blue-400' },
-            orange: { bg: 'from-orange-500/20 via-orange-500/5 to-transparent', icon: 'text-orange-400' },
-            yellow: { bg: 'from-amber-500/20 via-amber-500/5 to-transparent', icon: 'text-amber-400' },
-            green: { bg: 'from-emerald-500/20 via-emerald-500/5 to-transparent', icon: 'text-emerald-400' }
+        const styles: Record<string, { bg: string, icon: string, border: string }> = {
+            red: { bg: 'bg-rose-500/10', icon: 'text-rose-400', border: 'border-rose-500/20' },
+            purple: { bg: 'bg-violet-500/10', icon: 'text-violet-400', border: 'border-violet-500/20' },
+            blue: { bg: 'bg-blue-500/10', icon: 'text-blue-400', border: 'border-blue-500/20' },
+            orange: { bg: 'bg-orange-500/10', icon: 'text-orange-400', border: 'border-orange-500/20' },
+            yellow: { bg: 'bg-amber-500/10', icon: 'text-amber-400', border: 'border-amber-500/20' },
+            green: { bg: 'bg-emerald-500/10', icon: 'text-emerald-400', border: 'border-emerald-500/20' }
         };
         return styles[color] || styles.blue;
     };
@@ -72,14 +72,14 @@ export function TemplateCard({ template, onClick }: TemplateCardProps) {
                 </div>
             )}
 
-            {/* Header with Gradient */}
-            <div className={`h-32 bg-gradient-to-br ${styles.bg} flex items-center justify-center relative p-6 transition-all duration-500 group-hover:scale-105 group-hover:opacity-80`}>
-                <div className={`p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg group-hover:scale-110 transition-transform duration-300 ${styles.icon}`}>
+            {/* Header - Now default background with colored icon */}
+            <div className="h-32 bg-[#111318]/50 flex items-center justify-center relative p-6 group-hover:bg-[#111318] transition-colors duration-300">
+                <div className={`p-4 rounded-2xl flex items-center justify-center border transition-all duration-300 group-hover:scale-110 ${styles.bg} ${styles.border} ${styles.icon}`}>
                     <Icon size={32} strokeWidth={1.5} />
                 </div>
 
                 {/* Category Tag */}
-                <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-black/40 backdrop-blur-sm border border-white/5 text-[10px] font-medium text-gray-300 uppercase tracking-wider">
+                <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-[#1c2128] border border-white/5 text-[10px] font-medium text-gray-400 uppercase tracking-wider">
                     {categoryInfo.label}
                 </div>
             </div>
