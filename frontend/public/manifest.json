@@ -1,0 +1,31 @@
+{
+    "name": "YouMove",
+    "short_name": "YouMove",
+    "description": "Seu personal trainer inteligente com IA",
+    "start_url": "/dashboard",
+    "display": "standalone",
+    "background_color": "#0A0F14",
+    "theme_color": "#3B82F6",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/youmove-logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/youmove-logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "fitness",
+        "health",
+        "sports"
+    ],
+    "lang": "pt-BR",
+    "prefer_related_applications": false
+}
