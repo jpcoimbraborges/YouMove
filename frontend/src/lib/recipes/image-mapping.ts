@@ -16,12 +16,12 @@ const RECIPE_IMAGES: Record<string, string> = {
     'aveia': 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=800&auto=format&fit=crop',
 
     // Meals / Proteins
-    'frango': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop', // Grilled chicken (new)
+    'frango': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop',
     'grelhado': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop',
-    'carne': 'https://images.unsplash.com/photo-1588166524941-3d36b7975d49?q=80&w=800&auto=format&fit=crop', // Beef (new)
-    'moida': 'https://images.unsplash.com/photo-1588166524941-3d36b7975d49?q=80&w=800&auto=format&fit=crop',
-    'patinho': 'https://images.unsplash.com/photo-1588166524941-3d36b7975d49?q=80&w=800&auto=format&fit=crop',
-    'salmao': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop', // Salmon w/ greens (new)
+    'carne': 'https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop', // Steak/Meat (Safe)
+    'moida': 'https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop',
+    'patinho': 'https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop',
+    'salmao': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
     'peixe': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
     'tilapia': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
     'salada': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
@@ -31,22 +31,22 @@ const RECIPE_IMAGES: Record<string, string> = {
     'arroz': 'https://images.unsplash.com/photo-1516684732162-798a0062be99?q=80&w=800&auto=format&fit=crop',
     'poke': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
     'atum': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
-    'cottage': 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?q=80&w=800&auto=format&fit=crop', // Cheese/dairy context
-    'queijo': 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?q=80&w=800&auto=format&fit=crop', // Cheese
+    'cottage': 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?q=80&w=800&auto=format&fit=crop',
+    'queijo': 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?q=80&w=800&auto=format&fit=crop',
     'legumes': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
     'vegetais': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
-    'pre-treino': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=800&auto=format&fit=crop', // Energy/Banana
-    'pos-treino': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=800&auto=format&fit=crop', // Protein meal
+    'pre-treino': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=800&auto=format&fit=crop',
+    'pos-treino': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=800&auto=format&fit=crop',
 
     // Snacks / Sides
-    'batata': 'https://images.unsplash.com/photo-1596097635121-14b63b7f0c19?q=80&w=800&auto=format&fit=crop', // Sweet potato
-    'doce': 'https://images.unsplash.com/photo-1596097635121-14b63b7f0c19?q=80&w=800&auto=format&fit=crop',
-    'rice': 'https://images.unsplash.com/photo-1620917670397-a363a0604084?q=80&w=800&auto=format&fit=crop', // Rice cake context (toast)
-    'cakes': 'https://images.unsplash.com/photo-1620917670397-a363a0604084?q=80&w=800&auto=format&fit=crop',
-    'amendoim': 'https://images.unsplash.com/photo-1620917670397-a363a0604084?q=80&w=800&auto=format&fit=crop',
-    'smoothie': 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?q=80&w=800&auto=format&fit=crop',
-    'shake': 'https://images.unsplash.com/photo-1579954115545-a95591f28dfc?q=80&w=800&auto=format&fit=crop',
-    'whey': 'https://images.unsplash.com/photo-1579954115545-a95591f28dfc?q=80&w=800&auto=format&fit=crop',
+    'batata': 'https://images.unsplash.com/photo-1518977676601-b53f82a24174?q=80&w=800&auto=format&fit=crop', // Roasted veg (Safe)
+    'doce': 'https://images.unsplash.com/photo-1518977676601-b53f82a24174?q=80&w=800&auto=format&fit=crop',
+    'rice': 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop', // Oatmeal (Safe)
+    'cakes': 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop',
+    'amendoim': 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop',
+    'smoothie': 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?q=80&w=800&auto=format&fit=crop', // Smoothie (Safe)
+    'shake': 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?q=80&w=800&auto=format&fit=crop',
+    'whey': 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?q=80&w=800&auto=format&fit=crop',
     'banana': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=800&auto=format&fit=crop',
 
     // Default
