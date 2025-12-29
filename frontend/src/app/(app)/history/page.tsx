@@ -200,14 +200,7 @@ export default function HistoryPage() {
                 {/* Header with Refresh */}
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-white">Histórico</h1>
-                    <button
-                        onClick={() => { setLoading(true); fetchSessions(); }}
-                        className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors border border-white/5"
-                        disabled={loading}
-                        title="Sincronizar e Atualizar"
-                    >
-                        <RefreshCw size={20} className={loading ? "animate-spin text-blue-500" : ""} />
-                    </button>
+
                 </div>
 
                 {/* Stats Cards */}
@@ -408,6 +401,15 @@ export default function HistoryPage() {
                         </div>
                     </div>
                 )}
+                {/* Floating Refresh Button */}
+                <button
+                    onClick={() => { setLoading(true); fetchSessions(); }}
+                    className="fixed bottom-24 right-4 lg:bottom-8 lg:right-8 z-40 w-12 h-12 rounded-full bg-[#1F2937] border border-white/10 text-blue-400 shadow-lg shadow-black/50 flex items-center justify-center transition-all hover:bg-[#2d3b4e] hover:scale-105 active:scale-95"
+                    disabled={loading}
+                    title="Sincronizar"
+                >
+                    <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+                </button>
             </main>
 
             {/* Mobile Nav */}
