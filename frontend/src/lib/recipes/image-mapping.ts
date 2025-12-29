@@ -35,15 +35,16 @@ const RECIPE_IMAGES: Record<string, string> = {
     'queijo': 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?q=80&w=800&auto=format&fit=crop',
     'legumes': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
     'vegetais': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',
-    'pre-treino': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=800&auto=format&fit=crop',
+    'pre-treino': 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=800&auto=format&fit=crop', // Oatmeal (Banana)
     'pos-treino': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=800&auto=format&fit=crop',
+    'maca': 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop', // Apple/Toast
 
     // Snacks / Sides
-    'batata': 'https://images.unsplash.com/photo-1518977676601-b53f82a24174?q=80&w=800&auto=format&fit=crop', // Roasted veg (Safe)
-    'doce': 'https://images.unsplash.com/photo-1518977676601-b53f82a24174?q=80&w=800&auto=format&fit=crop',
-    'rice': 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop', // Oatmeal (Safe)
-    'cakes': 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop',
-    'amendoim': 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=800&auto=format&fit=crop',
+    'batata': 'https://images.unsplash.com/photo-1606923829579-0cb90f979a37?q=80&w=800&auto=format&fit=crop', // Real baked sweet potato
+    'doce': 'https://images.unsplash.com/photo-1606923829579-0cb90f979a37?q=80&w=800&auto=format&fit=crop',
+    'rice': 'https://images.unsplash.com/photo-1511690656952-34342d5c2899?q=80&w=800&auto=format&fit=crop', // Toast/Rice cake
+    'cakes': 'https://images.unsplash.com/photo-1511690656952-34342d5c2899?q=80&w=800&auto=format&fit=crop',
+    'amendoim': 'https://images.unsplash.com/photo-1511690656952-34342d5c2899?q=80&w=800&auto=format&fit=crop',
     'smoothie': 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?q=80&w=800&auto=format&fit=crop', // Smoothie (Safe)
     'shake': 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?q=80&w=800&auto=format&fit=crop',
     'whey': 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?q=80&w=800&auto=format&fit=crop',
