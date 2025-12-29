@@ -78,7 +78,7 @@ const SelectionCard = ({
     icon?: any;
     title: string;
     description?: string;
-    color?: 'blue' | 'cyan' | 'purple' | 'orange';
+    color?: 'blue' | 'cyan' | 'purple' | 'orange' | 'green';
     layout?: 'vertical' | 'compact';
 }) => {
     const activeColors = {
@@ -86,6 +86,7 @@ const SelectionCard = ({
         cyan: 'border-cyan-500 bg-cyan-500/10 shadow-[0_0_20px_rgba(6,182,212,0.3)]',
         purple: 'border-purple-500 bg-purple-500/10 shadow-[0_0_20px_rgba(168,85,247,0.3)]',
         orange: 'border-orange-500 bg-orange-500/10 shadow-[0_0_20px_rgba(249,115,22,0.3)]',
+        green: 'border-green-500 bg-green-500/10 shadow-[0_0_20px_rgba(34,197,94,0.3)]',
     };
 
     const textColors = {
@@ -93,6 +94,7 @@ const SelectionCard = ({
         cyan: 'text-cyan-400',
         purple: 'text-purple-400',
         orange: 'text-orange-400',
+        green: 'text-green-400',
     };
 
     return (
@@ -497,8 +499,17 @@ function WorkoutPageContent() {
                                                 key={intensity.id}
                                                 selected={aiIntensity === intensity.id}
                                                 onClick={() => setAiIntensity(intensity.id as any)}
-                                                title={intensity.label}
-                                                color={intensity.id === 'advanced' ? 'orange' : 'blue'}
+                                                title={intensity.id === 'advanced' ? 'Beast Mode' : intensity.label}
+                                                icon={
+                                                    intensity.id === 'beginner' ? Sparkles :
+                                                        intensity.id === 'intermediate' ? Activity :
+                                                            Flame
+                                                }
+                                                color={
+                                                    intensity.id === 'beginner' ? 'green' :
+                                                        intensity.id === 'intermediate' ? 'blue' :
+                                                            'orange'
+                                                }
                                                 layout="compact"
                                                 description={
                                                     intensity.id === 'beginner' ? 'Para quem está começando' :
