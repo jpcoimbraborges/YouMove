@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { X, Clock, Flame, Beef, Droplets, Wheat, Share2, Heart, Plus, ChevronRight, ChefHat, Utensils } from 'lucide-react';
 import type { Recipe } from '@/types/recipe.types';
 import { getRecipeImage } from '@/lib/recipes/image-mapping';
+import { getRecipeCategoryStyle } from '@/lib/recipes/category-mapping';
 
 interface RecipeDetailModalProps {
     recipe: Recipe;
@@ -14,6 +15,7 @@ interface RecipeDetailModalProps {
 
 export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetailModalProps) {
     const imageUrl = getRecipeImage(recipe.name, recipe.image_url);
+    const categoryStyle = getRecipeCategoryStyle(recipe.name);
     const [hasError, setHasError] = useState(false);
 
     useEffect(() => {
@@ -33,7 +35,7 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
 
                 {/* Header Image */}
                 <div className="relative h-64 sm:h-72 shrink-0 bg-[#18181b]">
-                    {!hasError ? (
+                    {imageUrl && !hasError ? (
                         <Image
                             src={imageUrl}
                             alt={recipe.name}
@@ -43,10 +45,14 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
                             onError={() => setHasError(true)}
                         />
                     ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#1c2128] to-[#0e0f11]">
-                            <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
-                                <Utensils size={40} className="text-blue-500/50" />
+                        <div className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${categoryStyle.gradient}`}>
+                            <div className={`
+                                w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-md 
+                                flex items-center justify-center mb-4 border border-white/10
+                            `}>
+                                <categoryStyle.icon size={48} className={`text-white drop-shadow-lg`} strokeWidth={1.5} />
                             </div>
+                            <span className="text-white/60 text-sm font-medium tracking-wider uppercase">{categoryStyle.label}</span>
                         </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-transparent to-black/60 pointer-events-none" />

@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Clock, Flame, Beef, ChefHat, Eye, Zap, TrendingUp, Sparkles, Utensils } from 'lucide-react';
+import { Clock, Flame, Beef, Zap, Utensils } from 'lucide-react';
 import type { Recipe } from '@/types/recipe.types';
-import { getDifficultyLabel, getDifficultyColor } from '@/lib/recipes/utils';
+import { getDifficultyLabel } from '@/lib/recipes/utils';
 import { getRecipeImage } from '@/lib/recipes/image-mapping';
+import { getRecipeCategoryStyle } from '@/lib/recipes/category-mapping';
 
 interface RecipeCardProps {
     recipe: Recipe;
@@ -14,6 +15,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
     const imageUrl = getRecipeImage(recipe.name, recipe.image_url);
+    const categoryStyle = getRecipeCategoryStyle(recipe.name);
     const [hasError, setHasError] = useState(false);
 
     // Reset error state when recipe/image changes
@@ -28,9 +30,9 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                        hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)]
                        transition-all duration-500 cursor-pointer hover:-translate-y-1 active:scale-[0.98]"
         >
-            {/* Image Section */}
+            {/* Image Section or Icon Fallback */}
             <div className="relative h-56 overflow-hidden bg-[#18181b]">
-                {!hasError ? (
+                {imageUrl && !hasError ? (
                     <Image
                         src={imageUrl}
                         alt={recipe.name}
@@ -40,16 +42,21 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                         onError={() => setHasError(true)}
                     />
                 ) : (
-                    // Fallback UI for broken images
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#1c2128] to-[#121418]">
-                        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
-                            <Utensils size={32} className="text-blue-500/50" />
+                    // Modern Gradient Icon Fallback
+                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${categoryStyle.gradient}`}>
+                        <div className={`
+                            w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md 
+                            flex items-center justify-center mb-3 
+                            group-hover:scale-110 transition-transform duration-500 border border-white/10
+                        `}>
+                            <categoryStyle.icon size={40} className={`text-white drop-shadow-lg`} strokeWidth={1.5} />
                         </div>
+                        <span className="text-white/60 text-xs font-medium tracking-wider uppercase">{categoryStyle.label}</span>
                     </div>
                 )}
 
                 {/* Overlay Gradient (ensure it's on top of image or fallback) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-[#0e0f11]/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-[#0e0f11]/20 to-transparent pointer-events-none" />
 
                 {/* Difficulty Badge */}
                 <div className="absolute top-4 right-4">
