@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
+import { syncWorkoutSessions } from '@/lib/workout-sync';
 import {
     Calendar,
     Clock,
@@ -20,6 +21,7 @@ import {
     Sparkles,
     Users,
     Utensils,
+    RefreshCw,
 } from 'lucide-react';
 
 interface WorkoutSession {
@@ -58,58 +60,61 @@ export default function HistoryPage() {
         totalTime: 0,
     });
 
-    useEffect(() => {
-        const fetchSessions = async () => {
-            if (!user) {
-                setLoading(false);
-                return;
-            }
+    const fetchSessions = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
-            try {
-                const { data, error } = await supabase
-                    .from('workout_sessions')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('completed_at', { ascending: false });
+        try {
+            // Attempt to sync local pending sessions before fetching
+            await syncWorkoutSessions();
 
-                if (error) throw error;
+            const { data, error } = await supabase
+                .from('workout_sessions')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('completed_at', { ascending: false });
 
-                const processed = (data || []).map((session: any) => ({
-                    ...session,
-                    // Map ACTUAL production DB columns to component expected fields
-                    // DB has: duration_seconds, total_sets, total_reps, total_volume
-                    workout_name: session.workout_name || 'Treino',
-                    duration_seconds: session.duration_seconds || 0, // Already in seconds
-                    total_volume: session.total_volume || 0,
-                    total_sets: session.total_sets || 0,
-                    total_reps: session.total_reps || 0,
-                    calories_burned: session.calories_burned || Math.round((session.total_volume || 0) * 0.05),
-                }));
+            if (error) throw error;
 
-                setSessions(processed);
+            const processed = (data || []).map((session: any) => ({
+                ...session,
+                // Map ACTUAL production DB columns to component expected fields
+                // DB has: duration_seconds, total_sets, total_reps, total_volume
+                workout_name: session.workout_name || 'Treino',
+                duration_seconds: session.duration_seconds || 0, // Already in seconds
+                total_volume: session.total_volume || 0,
+                total_sets: session.total_sets || 0,
+                total_reps: session.total_reps || 0,
+                calories_burned: session.calories_burned || Math.round((session.total_volume || 0) * 0.05),
+            }));
 
-                // Stats
-                const weekAgo = new Date();
-                weekAgo.setDate(weekAgo.getDate() - 7);
-                const thisWeek = processed.filter((s: any) => s.completed_at && new Date(s.completed_at) > weekAgo).length;
-                const volume = processed.reduce((sum: number, s: any) => sum + (s.total_volume || 0), 0);
-                const time = processed.reduce((sum: number, s: any) => sum + (s.duration_seconds || 0), 0);
+            setSessions(processed);
 
-                setStats({
-                    totalWorkouts: processed.filter((s: any) => s.completed_at).length, // Only count completed
-                    weekWorkouts: thisWeek,
-                    totalVolume: volume,
-                    totalTime: time,
-                });
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+            // Stats
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const thisWeek = processed.filter((s: any) => s.completed_at && new Date(s.completed_at) > weekAgo).length;
+            const volume = processed.reduce((sum: number, s: any) => sum + (s.total_volume || 0), 0);
+            const time = processed.reduce((sum: number, s: any) => sum + (s.duration_seconds || 0), 0);
 
-        fetchSessions();
+            setStats({
+                totalWorkouts: processed.filter((s: any) => s.completed_at).length, // Only count completed
+                weekWorkouts: thisWeek,
+                totalVolume: volume,
+                totalTime: time,
+            });
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     }, [user]);
+
+    useEffect(() => {
+        fetchSessions();
+    }, [fetchSessions]);
 
     // Calendar helpers
     const getDaysInMonth = (year: number, month: number) => {
@@ -192,6 +197,19 @@ export default function HistoryPage() {
 
             {/* Main Content */}
             <main className="flex-1 p-4 lg:p-8 pb-28 lg:pb-8 overflow-y-auto">
+                {/* Header with Refresh */}
+                <div className="flex items-center justify-between mb-6">
+                    <h1 className="text-2xl font-bold text-white">Histórico</h1>
+                    <button
+                        onClick={() => { setLoading(true); fetchSessions(); }}
+                        className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors border border-white/5"
+                        disabled={loading}
+                        title="Sincronizar e Atualizar"
+                    >
+                        <RefreshCw size={20} className={loading ? "animate-spin text-blue-500" : ""} />
+                    </button>
+                </div>
+
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
                     <div className="bg-[#1F2937] p-4 rounded-2xl border border-white/5">
