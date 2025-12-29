@@ -15,7 +15,7 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
     const imageUrl = getRecipeImage(recipe.name, recipe.image_url);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
@@ -147,7 +147,7 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-4 sm:p-6 pb-24 sm:pb-6 bg-[#0e0f11] border-t border-white/10 shrink-0">
+                <div className="p-4 sm:p-6 pb-28 sm:pb-6 bg-[#0e0f11] border-t border-white/10 shrink-0">
                     <button
                         onClick={() => onAddToDiary(recipe)}
                         className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95"
