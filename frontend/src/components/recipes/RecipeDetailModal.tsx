@@ -31,6 +31,7 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
                         src={imageUrl}
                         alt={recipe.name}
                         fill
+                        unoptimized
                         className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-transparent to-black/60" />

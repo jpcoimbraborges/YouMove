@@ -27,6 +27,7 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                     src={imageUrl}
                     alt={recipe.name}
                     fill
+                    unoptimized
                     className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
 
@@ -37,8 +38,8 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                 <div className="absolute top-4 right-4">
                     <div className="px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-md bg-black/60 border border-white/10 flex items-center gap-1.5 shadow-lg">
                         <div className={`w-1.5 h-1.5 rounded-full ${recipe.difficulty === 'easy' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' :
-                                recipe.difficulty === 'medium' ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]' :
-                                    'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'
+                            recipe.difficulty === 'medium' ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]' :
+                                'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'
                             }`} />
                         <span className="text-white tracking-wide uppercase text-[10px]">
                             {getDifficultyLabel(recipe.difficulty)}
