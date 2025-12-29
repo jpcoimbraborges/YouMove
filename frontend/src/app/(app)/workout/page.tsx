@@ -32,7 +32,8 @@ import {
     Building,
     HeartPulse,
     Flower,
-    Library
+    Library,
+    Wand2
 } from 'lucide-react';
 
 // Navigation items
@@ -521,8 +522,8 @@ function WorkoutPageContent() {
                                                 key={time}
                                                 onClick={() => setAiDuration(time)}
                                                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all duration-300 border ${aiDuration === time
-                                                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
-                                                        : 'bg-white/5 text-gray-500 border-transparent hover:bg-white/10 hover:text-gray-300'
+                                                    ? 'bg-blue-500/10 text-blue-400 border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
+                                                    : 'bg-white/5 text-gray-500 border-transparent hover:bg-white/10 hover:text-gray-300'
                                                     }`}
                                             >
                                                 {time}m
@@ -564,26 +565,31 @@ function WorkoutPageContent() {
                             </div>
                         </div>
 
-                        {/* Generate Button */}
-                        <div className="max-w-md mx-auto">
+                        {/* Generate Button - Premium */}
+                        <div className="max-w-md mx-auto relative group">
+                            {/* Animated Background Glow */}
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-400 rounded-2xl blur opacity-30 group-hover:opacity-75 transition duration-500 animate-pulse" />
+
                             <button
                                 onClick={handleGenerateAI}
                                 disabled={loading}
-                                className="w-full py-5 rounded-2xl font-bold text-lg text-white flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 min-h-[60px]"
+                                className="relative w-full py-5 rounded-2xl font-bold text-lg text-white flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 min-h-[64px] overflow-hidden"
                                 style={{
-                                    background: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-                                    boxShadow: '0 0 40px rgba(6, 182, 212, 0.4)'
+                                    background: 'linear-gradient(135deg, #2563eb 0%, #0891b2 100%)',
                                 }}
                             >
+                                {/* Shine overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
                                 {loading ? (
                                     <>
                                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Gerando seu treino...
+                                        <span className="opacity-90">Construindo seu treino...</span>
                                     </>
                                 ) : (
                                     <>
-                                        <Sparkles size={22} />
-                                        Gerar Treino com IA ✨
+                                        <Wand2 size={24} className="text-blue-100" strokeWidth={2} />
+                                        <span className="tracking-wide drop-shadow-md">Gerar Treino com IA</span>
                                     </>
                                 )}
                             </button>
