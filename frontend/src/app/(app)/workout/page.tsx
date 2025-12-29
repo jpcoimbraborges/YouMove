@@ -31,7 +31,8 @@ import {
     Home,
     Building,
     HeartPulse,
-    Flower
+    Flower,
+    Library
 } from 'lucide-react';
 
 // Navigation items
@@ -505,21 +506,28 @@ function WorkoutPageContent() {
                         {/* Templates Banner */}
                         <Link
                             href="/workout/templates"
-                            className="block mb-8 rounded-2xl p-5 transition-all hover:scale-[1.01] group border border-purple-500/20 hover:border-purple-500/40"
-                            style={{ background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)' }}
+                            className="block mb-8 rounded-2xl p-1 relative overflow-hidden group transition-all duration-300 hover:scale-[1.01]"
                         >
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center text-2xl">
-                                    📋
+                            {/* Gradient Border Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-cyan-500/30 to-blue-600/30 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+
+                            {/* Content Container */}
+                            <div className="relative bg-[#1F2937] hover:bg-[#1F2937]/90 rounded-xl p-5 flex items-center gap-5 transition-colors">
+                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
+                                    <Library size={28} className="text-white" strokeWidth={1.5} />
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="text-white font-bold text-lg group-hover:text-purple-300 transition-colors">Templates Prontos</h3>
-                                    <p className="text-gray-400 text-sm">15 treinos pré-configurados para começar agora</p>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h3 className="text-white font-bold text-lg group-hover:text-blue-400 transition-colors">Templates Prontos</h3>
+                                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">PRO</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">Treinos prontos criados por especialistas.</p>
                                 </div>
-                                <ChevronRight size={24} className="text-gray-500 group-hover:text-purple-400 transition-colors" />
+                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                                    <ChevronRight size={20} />
+                                </div>
                             </div>
                         </Link>
-
                         {/* Search & Filter */}
                         <div className="flex gap-3 mb-6">
                             <div className="flex-1 relative">
