@@ -36,7 +36,7 @@ const quickActions: QuickAction[] = [
         id: 'recipes-library',
         label: 'Receitas Fit',
         icon: ChefHat,
-        href: '/recipes',
+        href: '/nutrition/recipes',
         color: 'text-purple-400',
         bgGradient: 'from-purple-600/20 to-pink-600/20',
         iconBg: 'bg-purple-500/20'
