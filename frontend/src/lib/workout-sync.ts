@@ -230,7 +230,6 @@ async function syncSingleSession(session: WorkoutSession): Promise<void> {
                 user_id,
                 exercise_id: exercise.exercise_id,
                 exercise_order: exercise.order,
-                exercise_order: exercise.order,
                 sets: setData,
                 total_volume_kg: safeInt(totalVolume),
                 total_reps: safeInt(completedSets.reduce((a, s) => a + safeInt(s.actual_reps || 0), 0)),
