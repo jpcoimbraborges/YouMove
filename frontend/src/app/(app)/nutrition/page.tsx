@@ -693,6 +693,29 @@ export default function NutritionPage() {
                             </button>
                         </div>
 
+                        {/* Quick Actions Row 2 */}
+                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
+                            {/* Receitas Saudáveis */}
+                            <Link
+                                href="/nutrition/recipes"
+                                className="group relative overflow-hidden rounded-[1.5rem] bg-[#1F2937] p-1 border border-white/5 transition-all hover:border-green-500/30 block"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <div className="relative flex items-center gap-4 p-5 bg-[#121214] rounded-[1.2rem] h-full transition-colors group-hover:bg-[#151518]">
+                                    <div className="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center shrink-0 shadow-lg shadow-green-600/20 group-hover:scale-105 transition-transform duration-300">
+                                        <ChefHat size={26} className="text-white" />
+                                    </div>
+                                    <div className="text-left">
+                                        <h3 className="text-lg font-bold text-white group-hover:text-green-400 transition-colors">Receitas Saudáveis</h3>
+                                        <p className="text-xs text-gray-400 mt-1">Explore +20 opções fit para sua dieta</p>
+                                    </div>
+                                    <div className="ml-auto opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                                        <ChevronRight size={20} className="text-green-500" />
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+
 
                         {/* Meals Timeline */}
                         <div>
