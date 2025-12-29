@@ -8,9 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+
 
 interface CoachRequest {
     exerciseName: string;
@@ -67,6 +65,9 @@ function getContextPrompt(context: string): string {
 
 export async function POST(request: NextRequest) {
     try {
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
         const body: CoachRequest = await request.json();
 
         const {

@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: NextRequest) {
     try {
         const { image } = await req.json();
@@ -12,6 +8,15 @@ export async function POST(req: NextRequest) {
         if (!image) {
             return NextResponse.json({ error: 'Image is required' }, { status: 400 });
         }
+
+        // Initialize OpenAI client at runtime
+        if (!process.env.OPENAI_API_KEY) {
+            return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 });
+        }
+
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
 
         // The image comes as a base64 Data URL, we need to pass it to OpenAI
         const response = await openai.chat.completions.create({
