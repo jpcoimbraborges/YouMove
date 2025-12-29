@@ -1,263 +1,131 @@
 'use client';
 
-/**
- * DEBUG PAGE - Verificar dados no Supabase
- * Acesse: /debug para ver os dados brutos do banco
- */
-
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { syncWorkoutSessions, getSyncStatus } from '@/lib/workout-sync';
+import { getPendingSync } from '@/lib/workout-session';
 
 export default function DebugPage() {
-    const [userId, setUserId] = useState<string | null>(null);
-    const [sessions, setSessions] = useState<any[]>([]);
-    const [columns, setColumns] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { user } = useAuth();
+    const [logs, setLogs] = useState<string[]>([]);
+    const [pendingCount, setPendingCount] = useState(0);
+    const [dbStatus, setDbStatus] = useState<'unknown' | 'ok' | 'error'>('unknown');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            // Get user directly from Supabase session
-            const { data: { user } } = await supabase.auth.getUser();
+    const addLog = (msg: string) => {
+        setLogs(prev => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
+    };
 
-            if (!user) {
-                setError('Usuário não autenticado. Por favor, faça login.');
-                setLoading(false);
-                return;
-            }
+    const checkPending = () => {
+        const pending = getPendingSync();
+        setPendingCount(pending.length);
+        addLog(`Pending items in Local Storage: ${pending.length}`);
+        if (pending.length > 0) {
+            addLog(`First pending ID: ${pending[0].session_id}`);
+            addLog(`First pending attempts: ${pending[0].attempts}`);
+        }
+    };
 
-            setUserId(user.id);
+    const runPermissionsTest = async () => {
+        if (!user) {
+            addLog('❌ No user logged in');
+            return;
+        }
 
-            try {
-                // Buscar todas as sessões
-                const { data, error: fetchError } = await supabase
-                    .from('workout_sessions')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-
-                if (fetchError) {
-                    setError(fetchError.message);
-                    return;
-                }
-
-                if (data && data.length > 0) {
-                    setColumns(Object.keys(data[0]));
-                    setSessions(data);
-                } else {
-                    setError('Nenhuma sessão encontrada');
-                }
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-[#0B0E14] p-8 text-white">
-                <p>Carregando dados do banco...</p>
-            </div>
-        );
-    }
-
-    return (
-        <div className="min-h-screen bg-[#0B0E14] p-8 text-white overflow-x-auto">
-            <h1 className="text-2xl font-bold mb-6">🔍 Debug - Dados do Banco</h1>
-
-            {error && (
-                <div className="bg-red-500/20 border border-red-500 p-4 rounded-lg mb-6">
-                    <p className="text-red-400">{error}</p>
-                </div>
-            )}
-
-            <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-2">Colunas na tabela workout_sessions:</h2>
-                <div className="flex flex-wrap gap-2">
-                    {columns.map(col => (
-                        <span key={col} className="px-2 py-1 bg-blue-500/20 rounded text-xs text-blue-400">
-                            {col}
-                        </span>
-                    ))}
-                </div>
-            </div>
-
-            <h2 className="text-lg font-semibold mb-4">Últimas 10 sessões (dados brutos):</h2>
-
-            {sessions.map((session, idx) => (
-                <div key={session.id} className="bg-[#1F2937] rounded-lg p-4 mb-4 border border-white/10">
-                    <h3 className="font-bold text-blue-400 mb-3">
-                        Sessão {idx + 1}: {session.name || session.workout_name || 'Sem nome'}
-                    </h3>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                        <div>
-                            <span className="text-gray-500">ID:</span>
-                            <p className="text-white truncate">{session.id}</p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Status:</span>
-                            <p className="text-white">{session.status || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Duração (segundos):</span>
-                            <p className={session.duration_seconds > 0 ? 'text-green-400' : 'text-red-400'}>
-                                {session.duration_seconds ?? 'NULL'}
-                            </p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Volume (total_volume):</span>
-                            <p className={session.total_volume > 0 ? 'text-green-400' : 'text-red-400'}>
-                                {session.total_volume ?? 'NULL'}
-                            </p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Sets (total_sets):</span>
-                            <p className={session.total_sets > 0 ? 'text-green-400' : 'text-red-400'}>
-                                {session.total_sets ?? 'NULL'}
-                            </p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Reps (total_reps):</span>
-                            <p className={session.total_reps > 0 ? 'text-green-400' : 'text-red-400'}>
-                                {session.total_reps ?? 'NULL'}
-                            </p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Iniciado:</span>
-                            <p className="text-white text-xs">{session.started_at || 'NULL'}</p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Concluído:</span>
-                            <p className="text-white text-xs">{session.completed_at || 'NULL'}</p>
-                        </div>
-                    </div>
-                </div>
-            ))}
-
-            <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                <h3 className="font-bold text-yellow-400 mb-2">📌 Diagnóstico:</h3>
-                <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• Se campos estão <span className="text-red-400">vermelhos</span> (0 ou NULL): dados não foram salvos corretamente</li>
-                    <li>• Se campos estão <span className="text-green-400">verdes</span> (&gt;0): dados foram salvos corretamente</li>
-                    <li>• Treinos ANTIGOS terão dados zerados (é esperado)</li>
-                    <li>• Faça um NOVO treino após o deploy para testar</li>
-                </ul>
-            </div>
-
-            {/* Reset Data Section */}
-            <ResetDataSection userId={userId || undefined} onReset={() => window.location.reload()} />
-        </div>
-    );
-}
-
-function ResetDataSection({ userId, onReset }: { userId?: string, onReset: () => void }) {
-    const [isConfirming, setIsConfirming] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
-
-    const handleDelete = async () => {
-        if (!userId) return;
-
-        setIsDeleting(true);
-        setResult(null);
+        addLog('🔄 Testing Workout Sessions Insert...');
+        const dummyId = crypto.randomUUID();
 
         try {
-            // Use API route to bypass RLS
-            const response = await fetch('/api/reset-data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
-            });
+            // 1. Try to Insert
+            const { error: insertError } = await supabase
+                .from('workout_sessions')
+                .insert({
+                    id: dummyId,
+                    user_id: user.id,
+                    workout_name: '__DEBUG_TEST__',
+                    completed_at: new Date().toISOString(),
+                    duration_seconds: 60,
+                    total_sets: 1,
+                    total_reps: 10,
+                    total_volume: 100
+                });
 
-            const data = await response.json();
+            if (insertError) {
+                addLog(`❌ Insert Failed: ${insertError.message} (${insertError.code})`);
+                setDbStatus('error');
+            } else {
+                addLog('✅ Insert Successful');
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to delete data');
+                // 2. Try to Delete (Cleanup)
+                const { error: deleteError } = await supabase
+                    .from('workout_sessions')
+                    .delete()
+                    .eq('id', dummyId);
+
+                if (deleteError) {
+                    addLog(`⚠️ Cleanup Delete Failed: ${deleteError.message}`);
+                } else {
+                    addLog('✅ Cleanup Successful');
+                }
+                setDbStatus('ok');
             }
 
-            // Clear local storage
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('youmove_active_session');
-                localStorage.removeItem('youmove_session_backup');
-                localStorage.removeItem('youmove_pending_sync');
-                localStorage.removeItem('youmove_session_events');
+        } catch (e: any) {
+            addLog(`❌ Exception: ${e.message}`);
+        }
+    };
+
+    const forceSync = async () => {
+        addLog('🔄 Force Sync Initiated...');
+        try {
+            const result = await syncWorkoutSessions();
+            addLog(`🏁 Sync Result: Success=${result.success}, Synced=${result.synced}, Failed=${result.failed}`);
+            if (result.errors.length > 0) {
+                result.errors.forEach(e => addLog(`❌ Sync Error [${e.session_id}]: ${e.error}`));
             }
-
-            setResult({
-                success: true,
-                message: `✅ Dados deletados com sucesso! ${data.deleted?.sessions || 0} sessões removidas.`
-            });
-
-            // Reload after 2 seconds
-            setTimeout(() => {
-                onReset();
-            }, 2000);
-
-        } catch (err: any) {
-            setResult({
-                success: false,
-                message: `❌ Erro: ${err.message}`
-            });
-        } finally {
-            setIsDeleting(false);
-            setIsConfirming(false);
+        } catch (e: any) {
+            addLog(`❌ Sync Exception: ${e.message}`);
         }
     };
 
     return (
-        <div className="mt-8 p-6 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <h3 className="font-bold text-red-400 mb-4 flex items-center gap-2">
-                ⚠️ Zona de Perigo - Reset de Dados
-            </h3>
+        <div className="min-h-screen bg-[#0B0E14] text-white p-8 pb-24">
+            <h1 className="text-2xl font-bold mb-6 text-blue-500">System Debugger</h1>
 
-            {result && (
-                <div className={`mb-4 p-3 rounded-lg ${result.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                    {result.message}
+            <div className="grid gap-6">
+                {/* Auth Status */}
+                <div className="bg-[#1F2937] p-4 rounded-xl border border-white/10">
+                    <h2 className="font-bold mb-2">Authentication</h2>
+                    <p>User ID: <span className="font-mono text-xs bg-black/30 px-2 py-1 rounded">{user?.id || 'Not logged in'}</span></p>
+                    <p className="text-sm text-gray-400 mt-1">Email: {user?.email}</p>
                 </div>
-            )}
 
-            {!isConfirming ? (
-                <div>
-                    <p className="text-sm text-gray-400 mb-4">
-                        Isso irá deletar <strong>TODAS</strong> as suas sessões de treino do banco de dados
-                        e limpar o armazenamento local. Use apenas para fins de teste.
-                    </p>
-                    <button
-                        onClick={() => setIsConfirming(true)}
-                        className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg border border-red-500/50 transition-all"
-                    >
-                        🗑️ Zerar Todos os Meus Dados
+                {/* Controls */}
+                <div className="flex flex-wrap gap-2">
+                    <button onClick={checkPending} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium">
+                        Check Pending ({pendingCount})
+                    </button>
+                    <button onClick={runPermissionsTest} className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-medium">
+                        Test DB Permissions
+                    </button>
+                    <button onClick={forceSync} className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-medium">
+                        Force Retry Sync
+                    </button>
+                    <button onClick={() => setLogs([])} className="bg-red-900/50 hover:bg-red-900 px-4 py-2 rounded-lg font-medium border border-red-500/30">
+                        Clear Logs
                     </button>
                 </div>
-            ) : (
-                <div>
-                    <p className="text-sm text-red-300 mb-4 font-semibold">
-                        ⚠️ TEM CERTEZA? Esta ação é IRREVERSÍVEL!
-                    </p>
-                    <div className="flex gap-3">
-                        <button
-                            onClick={handleDelete}
-                            disabled={isDeleting}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all disabled:opacity-50"
-                        >
-                            {isDeleting ? '⏳ Deletando...' : '✓ Sim, Deletar Tudo'}
-                        </button>
-                        <button
-                            onClick={() => setIsConfirming(false)}
-                            disabled={isDeleting}
-                            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-all"
-                        >
-                            ✕ Cancelar
-                        </button>
-                    </div>
+
+                {/* Console */}
+                <div className="bg-black/50 p-4 rounded-xl border border-white/10 h-96 overflow-y-auto font-mono text-xs">
+                    {logs.length === 0 && <span className="text-gray-500">Ready. Click buttons above to test.</span>}
+                    {logs.map((log, i) => (
+                        <div key={i} className={`mb-1 ${log.includes('❌') ? 'text-red-400' : log.includes('✅') ? 'text-green-400' : 'text-gray-300'}`}>
+                            {log}
+                        </div>
+                    ))}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
