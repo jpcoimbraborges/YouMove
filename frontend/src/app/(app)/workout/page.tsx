@@ -466,11 +466,35 @@ function WorkoutPageContent() {
                                     </div>
                                 </div>
 
-                                {/* Duration Slider */}
-                                <div className="rounded-2xl p-5" style={{ background: '#1F2937' }}>
-                                    <p className="text-sm text-gray-400 mb-4 font-medium">Tempo Disponível</p>
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-4xl font-bold text-white mb-4">{aiDuration}<span className="text-lg text-gray-500">min</span></span>
+                                {/* Duration Slider - Premium Layout */}
+                                <div className="rounded-2xl p-6 border border-white/5 relative overflow-hidden group" style={{ background: '#1F2937' }}>
+
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-sm text-gray-400 font-medium">Tempo Disponível</h3>
+                                        <Clock size={16} className="text-blue-500" />
+                                    </div>
+
+                                    {/* Large Display */}
+                                    <div className="flex items-end justify-center gap-1 mb-8">
+                                        <span className="text-6xl font-bold text-white tracking-tighter" style={{ textShadow: '0 0 30px rgba(59,130,246,0.3)' }}>
+                                            {aiDuration}
+                                        </span>
+                                        <span className="text-xl text-gray-500 font-medium mb-2">min</span>
+                                    </div>
+
+                                    {/* Custom Range Slider */}
+                                    <div className="relative h-8 mb-8 flex items-center select-none">
+                                        {/* Track Background */}
+                                        <div className="absolute w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                                            {/* Progress Fill */}
+                                            <div
+                                                className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-150 ease-out"
+                                                style={{ width: `${((aiDuration - 15) / 75) * 100}%` }}
+                                            />
+                                        </div>
+
+                                        {/* Invisible Input for Accessibility & Interaction */}
                                         <input
                                             type="range"
                                             min="15"
@@ -478,15 +502,32 @@ function WorkoutPageContent() {
                                             step="5"
                                             value={aiDuration}
                                             onChange={(e) => setAiDuration(Number(e.target.value))}
-                                            className="w-full h-2 bg-gray-700 rounded-full appearance-none cursor-pointer accent-[#3b82f6]"
-                                            style={{
-                                                background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((aiDuration - 15) / 75) * 100}%, #374151 ${((aiDuration - 15) / 75) * 100}%, #374151 100%)`
-                                            }}
+                                            className="absolute w-full h-full opacity-0 cursor-pointer z-20"
                                         />
-                                        <div className="flex justify-between w-full mt-2 text-xs text-gray-500">
-                                            <span>15min</span>
-                                            <span>90min</span>
+
+                                        {/* Custom Knob (Visual Only) */}
+                                        <div
+                                            className="absolute h-6 w-6 bg-white rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)] border-2 border-blue-500 z-10 pointer-events-none transition-all duration-150 ease-out flex items-center justify-center transform -translate-x-1/2"
+                                            style={{ left: `${((aiDuration - 15) / 75) * 100}%` }}
+                                        >
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                                         </div>
+                                    </div>
+
+                                    {/* Quick Pills */}
+                                    <div className="flex justify-between items-center gap-2">
+                                        {[15, 30, 45, 60, 90].map((time) => (
+                                            <button
+                                                key={time}
+                                                onClick={() => setAiDuration(time)}
+                                                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all duration-300 border ${aiDuration === time
+                                                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
+                                                        : 'bg-white/5 text-gray-500 border-transparent hover:bg-white/10 hover:text-gray-300'
+                                                    }`}
+                                            >
+                                                {time}m
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
 
