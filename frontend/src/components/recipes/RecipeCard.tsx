@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { Clock, Flame, Beef, ChefHat, Eye, Zap, TrendingUp, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Clock, Flame, Beef, ChefHat, Eye, Zap, TrendingUp, Sparkles, Utensils } from 'lucide-react';
 import type { Recipe } from '@/types/recipe.types';
 import { getDifficultyLabel, getDifficultyColor } from '@/lib/recipes/utils';
 import { getRecipeImage } from '@/lib/recipes/image-mapping';
@@ -13,6 +14,12 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
     const imageUrl = getRecipeImage(recipe.name, recipe.image_url);
+    const [hasError, setHasError] = useState(false);
+
+    // Reset error state when recipe/image changes
+    useEffect(() => {
+        setHasError(false);
+    }, [imageUrl]);
 
     return (
         <div
@@ -22,17 +29,27 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                        transition-all duration-500 cursor-pointer hover:-translate-y-1 active:scale-[0.98]"
         >
             {/* Image Section */}
-            <div className="relative h-56 overflow-hidden">
-                <Image
-                    src={imageUrl}
-                    alt={recipe.name}
-                    fill
-                    unoptimized
-                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                />
+            <div className="relative h-56 overflow-hidden bg-[#18181b]">
+                {!hasError ? (
+                    <Image
+                        src={imageUrl}
+                        alt={recipe.name}
+                        fill
+                        unoptimized
+                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        onError={() => setHasError(true)}
+                    />
+                ) : (
+                    // Fallback UI for broken images
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#1c2128] to-[#121418]">
+                        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
+                            <Utensils size={32} className="text-blue-500/50" />
+                        </div>
+                    </div>
+                )}
 
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-[#0e0f11]/40 to-transparent" />
+                {/* Overlay Gradient (ensure it's on top of image or fallback) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-[#0e0f11]/40 to-transparent pointer-events-none" />
 
                 {/* Difficulty Badge */}
                 <div className="absolute top-4 right-4">

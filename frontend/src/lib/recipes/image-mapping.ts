@@ -16,12 +16,12 @@ const RECIPE_IMAGES: Record<string, string> = {
     'aveia': 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=800&auto=format&fit=crop',
 
     // Meals / Proteins
-    'frango': 'https://images.unsplash.com/photo-1532550907401-7f58865a3639?q=80&w=800&auto=format&fit=crop',
-    'grelhado': 'https://images.unsplash.com/photo-1532550907401-7f58865a3639?q=80&w=800&auto=format&fit=crop',
-    'carne': 'https://images.unsplash.com/photo-1603360946369-dc9bb6f5f3b5?q=80&w=800&auto=format&fit=crop',
-    'moida': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=800&auto=format&fit=crop',
-    'patinho': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?q=80&w=800&auto=format&fit=crop',
-    'salmao': 'https://images.unsplash.com/photo-1467003909585-2f8a7270028d?q=80&w=800&auto=format&fit=crop',
+    'frango': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop', // Grilled chicken (new)
+    'grelhado': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop',
+    'carne': 'https://images.unsplash.com/photo-1588166524941-3d36b7975d49?q=80&w=800&auto=format&fit=crop', // Beef (new)
+    'moida': 'https://images.unsplash.com/photo-1588166524941-3d36b7975d49?q=80&w=800&auto=format&fit=crop',
+    'patinho': 'https://images.unsplash.com/photo-1588166524941-3d36b7975d49?q=80&w=800&auto=format&fit=crop',
+    'salmao': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop', // Salmon w/ greens (new)
     'peixe': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
     'tilapia': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop',
     'salada': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop',

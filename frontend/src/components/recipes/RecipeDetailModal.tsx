@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { X, Clock, Flame, Beef, Droplets, Wheat, Share2, Heart, Plus, ChevronRight, ChefHat } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Clock, Flame, Beef, Droplets, Wheat, Share2, Heart, Plus, ChevronRight, ChefHat, Utensils } from 'lucide-react';
 import type { Recipe } from '@/types/recipe.types';
 import { getRecipeImage } from '@/lib/recipes/image-mapping';
 
@@ -13,12 +14,17 @@ interface RecipeDetailModalProps {
 
 export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetailModalProps) {
     const imageUrl = getRecipeImage(recipe.name, recipe.image_url);
+    const [hasError, setHasError] = useState(false);
+
+    useEffect(() => {
+        setHasError(false);
+    }, [imageUrl]);
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity"
                 onClick={onClose}
             />
 
@@ -26,15 +32,24 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
             <div className="relative w-full max-w-2xl bg-[#0e0f11] rounded-t-[2rem] sm:rounded-3xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
 
                 {/* Header Image */}
-                <div className="relative h-64 sm:h-72 shrink-0">
-                    <Image
-                        src={imageUrl}
-                        alt={recipe.name}
-                        fill
-                        unoptimized
-                        className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-transparent to-black/60" />
+                <div className="relative h-64 sm:h-72 shrink-0 bg-[#18181b]">
+                    {!hasError ? (
+                        <Image
+                            src={imageUrl}
+                            alt={recipe.name}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                            onError={() => setHasError(true)}
+                        />
+                    ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#1c2128] to-[#0e0f11]">
+                            <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
+                                <Utensils size={40} className="text-blue-500/50" />
+                            </div>
+                        </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-transparent to-black/60 pointer-events-none" />
 
                     {/* Floating Close Button */}
                     <button
