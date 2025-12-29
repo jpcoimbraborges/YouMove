@@ -118,7 +118,7 @@ export default function TemplatesPage() {
                     {/* Title Row */}
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20 text-white">
                                 <Library size={24} />
                             </div>
                             <div>
@@ -151,16 +151,16 @@ export default function TemplatesPage() {
                         {/* Filter Toggle */}
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`px-4 py-3 rounded-xl border transition-colors flex items-center gap-2
+                            className={`px-4 py-3 rounded-xl border transition-all flex items-center gap-2
                                 ${showFilters || hasActiveFilters
-                                    ? 'bg-blue-600/20 border-blue-500/30 text-blue-400'
+                                    ? 'bg-gradient-to-r from-blue-600/20 to-cyan-500/20 border-blue-500/50 text-blue-400 shadow-lg shadow-blue-500/10'
                                     : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10'
                                 }`}
                         >
                             <Filter size={20} />
                             <span className="hidden sm:inline">Filtros</span>
                             {hasActiveFilters && (
-                                <span className="w-2 h-2 rounded-full bg-blue-400" />
+                                <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
                             )}
                         </button>
                     </div>
@@ -194,10 +194,10 @@ export default function TemplatesPage() {
                                                         ...filters,
                                                         category: filters.category === key ? undefined : key
                                                     })}
-                                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2
+                                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2
                                                         ${filters.category === key
-                                                            ? 'bg-blue-600 text-white'
-                                                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                                            ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25 border border-transparent'
+                                                            : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-transparent hover:border-white/10'
                                                         }`}
                                                 >
                                                     <Icon size={14} /> {val.label}
@@ -218,9 +218,9 @@ export default function TemplatesPage() {
                                                     ...filters,
                                                     difficulty: filters.difficulty === key ? undefined : key as any
                                                 })}
-                                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all
                                                     ${filters.difficulty === key
-                                                        ? 'bg-blue-600 text-white'
+                                                        ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
                                                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                                                     }`}
                                             >
@@ -241,9 +241,9 @@ export default function TemplatesPage() {
                                                     ...filters,
                                                     maxDuration: filters.maxDuration === mins ? undefined : mins
                                                 })}
-                                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all
                                                     ${filters.maxDuration === mins
-                                                        ? 'bg-blue-600 text-white'
+                                                        ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
                                                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                                                     }`}
                                             >
