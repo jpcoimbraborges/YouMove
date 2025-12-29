@@ -45,14 +45,14 @@ export function RecipeDetailModal({ recipe, onClose, onAddToDiary }: RecipeDetai
                             onError={() => setHasError(true)}
                         />
                     ) : (
-                        <div className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${categoryStyle.gradient}`}>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#18181b]">
                             <div className={`
-                                w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-md 
-                                flex items-center justify-center mb-4 border border-white/10
+                                w-24 h-24 rounded-2xl bg-white/5 backdrop-blur-md 
+                                flex items-center justify-center mb-4 border border-white/5
                             `}>
-                                <categoryStyle.icon size={48} className={`text-white drop-shadow-lg`} strokeWidth={1.5} />
+                                <categoryStyle.icon size={48} className={`${categoryStyle.iconColor} drop-shadow-lg`} strokeWidth={1.5} />
                             </div>
-                            <span className="text-white/60 text-sm font-medium tracking-wider uppercase">{categoryStyle.label}</span>
+                            <span className="text-gray-500 text-sm font-medium tracking-wider uppercase">{categoryStyle.label}</span>
                         </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0e0f11] via-transparent to-black/60 pointer-events-none" />

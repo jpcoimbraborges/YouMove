@@ -42,16 +42,16 @@ export function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                         onError={() => setHasError(true)}
                     />
                 ) : (
-                    // Modern Gradient Icon Fallback
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br ${categoryStyle.gradient}`}>
+                    // Modern Neutral Icon Fallback
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#18181b]">
                         <div className={`
-                            w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md 
+                            w-20 h-20 rounded-2xl bg-white/5 backdrop-blur-md 
                             flex items-center justify-center mb-3 
-                            group-hover:scale-110 transition-transform duration-500 border border-white/10
+                            group-hover:scale-110 transition-transform duration-500 border border-white/5
                         `}>
-                            <categoryStyle.icon size={40} className={`text-white drop-shadow-lg`} strokeWidth={1.5} />
+                            <categoryStyle.icon size={40} className={`${categoryStyle.iconColor} drop-shadow-lg`} strokeWidth={1.5} />
                         </div>
-                        <span className="text-white/60 text-xs font-medium tracking-wider uppercase">{categoryStyle.label}</span>
+                        <span className="text-gray-500 text-xs font-medium tracking-wider uppercase">{categoryStyle.label}</span>
                     </div>
                 )}
 
