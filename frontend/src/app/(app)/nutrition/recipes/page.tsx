@@ -96,37 +96,37 @@ export default function RecipesPage() {
                     </div>
 
                     {/* Search Bar */}
-                    <div className="relative mb-4">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Search size={18} className="text-gray-500" />
+                    <div className="relative mb-6">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <Search size={20} className="text-gray-500" />
                         </div>
                         <input
                             type="text"
                             placeholder="Buscar receitas, ingredientes..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-[#1F2937] border border-white/10 text-white text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-500"
+                            className="w-full bg-[#121214] border border-white/10 text-white text-sm rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:bg-[#18181b] transition-all placeholder-gray-600 shadow-inner"
                         />
                         {/* Filter Button (Visual only for now) */}
                         <div className="absolute inset-y-0 right-2 flex items-center">
                             <button
                                 onClick={() => setShowFilters(!showFilters)}
-                                className={`p-2 rounded-lg transition-colors ${showFilters ? 'text-blue-400 bg-blue-500/10' : 'text-gray-400 hover:text-white'}`}
+                                className={`p-2.5 rounded-xl transition-all ${showFilters ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20' : 'text-gray-500 hover:text-white hover:bg-white/5 border border-transparent'}`}
                             >
-                                <SlidersHorizontal size={18} />
+                                <SlidersHorizontal size={20} />
                             </button>
                         </div>
                     </div>
 
                     {/* Categories Scroller */}
-                    <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide -mx-4 px-4">
+                    <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide -mx-4 px-4 mask-linear-fade">
                         {categories.map(cat => (
                             <button
                                 key={cat.id}
                                 onClick={() => setActiveCategory(cat.id)}
-                                className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-all border ${activeCategory === cat.id
-                                    ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/25'
-                                    : 'bg-[#1F2937] border-white/5 text-gray-400 hover:border-white/20 hover:text-white'
+                                className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs font-bold transition-all border shadow-lg ${activeCategory === cat.id
+                                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 border-blue-400/50 text-white shadow-blue-500/20 scale-105'
+                                        : 'bg-[#18181b] border-white/5 text-gray-400 hover:border-white/10 hover:text-white hover:bg-[#202023]'
                                     }`}
                             >
                                 {cat.label}
