@@ -89,6 +89,25 @@ export default function DebugPage() {
         }
     };
 
+    const resetQueue = () => {
+        const key = 'youmove_pending_sync';
+        const stored = localStorage.getItem(key);
+        if (stored) {
+            try {
+                const items = JSON.parse(stored);
+                // Reset attempts to 0 for all items
+                const updated = items.map((i: any) => ({ ...i, attempts: 0, error: null }));
+                localStorage.setItem(key, JSON.stringify(updated));
+                addLog('✅ Queue Reset! Attempts set to 0. Try syncing now.');
+                checkPending(); // Update UI
+            } catch (e) {
+                addLog('❌ Error parsing queue');
+            }
+        } else {
+            addLog('⚠️ No queue found to reset.');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#0B0E14] text-white p-8 pb-24">
             <h1 className="text-2xl font-bold mb-6 text-blue-500">System Debugger</h1>
@@ -111,6 +130,9 @@ export default function DebugPage() {
                     </button>
                     <button onClick={forceSync} className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-medium">
                         Force Retry Sync
+                    </button>
+                    <button onClick={resetQueue} className="bg-orange-600 hover:bg-orange-500 px-4 py-2 rounded-lg font-medium">
+                        Reset Queue (0/5)
                     </button>
                     <button onClick={() => setLogs([])} className="bg-red-900/50 hover:bg-red-900 px-4 py-2 rounded-lg font-medium border border-red-500/30">
                         Clear Logs
