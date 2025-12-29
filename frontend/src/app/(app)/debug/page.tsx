@@ -43,6 +43,7 @@ export default function DebugPage() {
                     id: dummyId,
                     user_id: user.id,
                     workout_name: '__DEBUG_TEST__',
+                    started_at: new Date().toISOString(),
                     completed_at: new Date().toISOString(),
                     duration_seconds: 60,
                     total_sets: 1,

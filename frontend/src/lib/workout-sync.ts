@@ -145,8 +145,9 @@ async function syncSingleSession(session: WorkoutSession): Promise<void> {
         user_id,
         workout_id: session.workout_id || null,
         workout_name: session.workout_name || 'Treino',
-        started_at: session.started_at,
-        completed_at: session.completed_at,
+        // Fix: Ensure started_at is not null. Fallback to completed_at minus duration, or just completed_at
+        started_at: session.started_at || (session.completed_at ? new Date(new Date(session.completed_at).getTime() - (durationSeconds * 1000)).toISOString() : new Date().toISOString()),
+        completed_at: session.completed_at || new Date().toISOString(),
         duration_seconds: durationSeconds,                    // SECONDS not minutes!
         total_sets: session.total_sets_completed || 0,        // Column is "total_sets"
         total_reps: session.total_reps_completed || 0,        // Column is "total_reps"  
