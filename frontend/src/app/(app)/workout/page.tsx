@@ -63,6 +63,90 @@ const getMuscleColor = (muscle: string) => {
     return colors[muscle.toLowerCase()] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
 };
 
+// Reusable Selection Card Component for Standardization
+const SelectionCard = ({
+    selected,
+    onClick,
+    icon: Icon,
+    title,
+    description,
+    color = 'blue',
+    layout = 'vertical', // vertical or compact
+}: {
+    selected: boolean;
+    onClick: () => void;
+    icon?: any;
+    title: string;
+    description?: string;
+    color?: 'blue' | 'cyan' | 'purple' | 'orange';
+    layout?: 'vertical' | 'compact';
+}) => {
+    const activeColors = {
+        blue: 'border-blue-500 bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+        cyan: 'border-cyan-500 bg-cyan-500/10 shadow-[0_0_20px_rgba(6,182,212,0.3)]',
+        purple: 'border-purple-500 bg-purple-500/10 shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+        orange: 'border-orange-500 bg-orange-500/10 shadow-[0_0_20px_rgba(249,115,22,0.3)]',
+    };
+
+    const textColors = {
+        blue: 'text-blue-400',
+        cyan: 'text-cyan-400',
+        purple: 'text-purple-400',
+        orange: 'text-orange-400',
+    };
+
+    return (
+        <button
+            onClick={onClick}
+            className={`
+                relative group overflow-hidden rounded-2xl border transition-all duration-300 ease-out
+                ${layout === 'vertical' ? 'flex flex-col items-center justify-center p-6 gap-3 text-center' : 'flex items-center p-4 gap-4 text-left'}
+                ${selected
+                    ? `${activeColors[color]} scale-[1.02] z-10`
+                    : 'bg-[#252a33] border-transparent hover:bg-[#2d333b] hover:border-white/10 hover:shadow-xl hover:shadow-black/20 hover:scale-[1.02]'
+                }
+            `}
+        >
+            {/* Icon Active Indicator */}
+            {selected && (
+                <div className={`absolute top-3 right-3 w-1.5 h-1.5 rounded-full ${textColors[color].replace('text-', 'bg-')} shadow-[0_0_8px_currentColor] animate-pulse`} />
+            )}
+
+            {/* Icon */}
+            {Icon && (
+                <div className={`
+                    rounded-xl flex items-center justify-center transition-colors duration-300
+                    ${layout === 'vertical' ? 'w-12 h-12 mb-1' : 'w-10 h-10'}
+                    ${selected ? 'bg-transparent' : 'bg-black/20 group-hover:bg-black/30'}
+                `}>
+                    <Icon
+                        size={layout === 'vertical' ? 28 : 22}
+                        className={`transition-colors duration-300 ${selected ? textColors[color] : 'text-gray-400 group-hover:text-gray-200'}`}
+                        strokeWidth={1.5}
+                    />
+                </div>
+            )}
+
+            {/* Content */}
+            <div className={layout === 'compact' ? 'flex-1' : ''}>
+                <span className={`block font-bold transition-colors ${selected ? 'text-white' : 'text-gray-300 group-hover:text-white'} ${layout === 'vertical' ? 'text-base' : 'text-sm'}`}>
+                    {title}
+                </span>
+                {description && (
+                    <span className={`block text-xs mt-1 transition-colors ${selected ? 'text-gray-300' : 'text-gray-500 group-hover:text-gray-400'}`}>
+                        {description}
+                    </span>
+                )}
+            </div>
+
+            {/* Hover Glow Gradient (Subtle) */}
+            {!selected && (
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            )}
+        </button>
+    );
+};
+
 function WorkoutPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -316,80 +400,66 @@ function WorkoutPageContent() {
                         {/* AI Controls Grid */}
                         <div className="space-y-6 max-w-4xl mx-auto mb-10">
                             {/* Equipment Selection - NEW STEP */}
-                            <div className="rounded-2xl p-6" style={{ background: '#1F2937' }}>
+                            <div className="rounded-2xl p-6 border border-white/5" style={{ background: '#1F2937' }}>
                                 <h3 className="text-lg font-bold text-white mb-2">Onde você vai treinar?</h3>
-                                <p className="text-sm text-gray-400 mb-5">Isso ajudará a IA a escolher os exercícios certos</p>
+                                <p className="text-sm text-gray-400 mb-6">Isso ajudará a IA a escolher os exercícios certos</p>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     {equipmentOptions.map((equipment) => (
-                                        <button
+                                        <SelectionCard
                                             key={equipment.id}
+                                            selected={equipmentType === equipment.id}
                                             onClick={() => setEquipmentType(equipment.id as any)}
-                                            className={`flex flex-col items-center gap-3 py-6 px-4 rounded-xl border-2 transition-all min-h-[130px] ${equipmentType === equipment.id
-                                                ? 'border-[#06b6d4] bg-[#06b6d4]/10 text-white'
-                                                : 'border-gray-600 text-gray-400 hover:border-gray-500 hover:bg-white/5'
-                                                }`}
-                                            style={equipmentType === equipment.id ? {
-                                                boxShadow: '0 0 25px rgba(6, 182, 212, 0.3)'
-                                            } : {}}
-                                        >
-                                            <equipment.icon size={32} strokeWidth={1.5} className={equipmentType === equipment.id ? 'text-[#06b6d4]' : 'text-gray-500'} />
-                                            <div className="text-center">
-                                                <span className="text-sm font-bold block mb-1">{equipment.label}</span>
-                                                <span className="text-xs text-gray-500">{equipment.desc}</span>
-                                            </div>
-                                        </button>
+                                            icon={equipment.icon}
+                                            title={equipment.label}
+                                            description={equipment.desc}
+                                            color="cyan"
+                                            layout="vertical"
+                                        />
                                     ))}
                                 </div>
                             </div>
 
                             {/* Plan Type Selection - NEW */}
-                            <div className="rounded-2xl p-6" style={{ background: '#1F2937' }}>
+                            <div className="rounded-2xl p-6 border border-white/5" style={{ background: '#1F2937' }}>
                                 <h3 className="text-lg font-bold text-white mb-2">Tipo de Planejamento</h3>
-                                <p className="text-sm text-gray-400 mb-5">Você quer um treino rápido ou uma rotina completa?</p>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <button
+                                <p className="text-sm text-gray-400 mb-6">Você quer um treino rápido ou uma rotina completa?</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <SelectionCard
+                                        selected={durationType === 'single'}
                                         onClick={() => setDurationType('single')}
-                                        className={`flex flex-col items-center gap-2 py-4 px-4 rounded-xl border-2 transition-all ${durationType === 'single'
-                                            ? 'border-[#3b82f6] bg-[#3b82f6]/10 text-white'
-                                            : 'border-gray-600 text-gray-400 hover:border-gray-500 hover:bg-white/5'
-                                            }`}
-                                    >
-                                        <Zap size={24} className={durationType === 'single' ? 'text-[#3b82f6]' : 'text-gray-500'} />
-                                        <span className="font-bold text-sm">Treino Único</span>
-                                    </button>
-                                    <button
+                                        icon={Zap}
+                                        title="Treino Único"
+                                        description="Sessão avulsa focada no hoje."
+                                        color="blue"
+                                        layout="compact"
+                                    />
+                                    <SelectionCard
+                                        selected={durationType === 'weekly'}
                                         onClick={() => setDurationType('weekly')}
-                                        className={`flex flex-col items-center gap-2 py-4 px-4 rounded-xl border-2 transition-all ${durationType === 'weekly'
-                                            ? 'border-[#06b6d4] bg-[#06b6d4]/10 text-white'
-                                            : 'border-gray-600 text-gray-400 hover:border-gray-500 hover:bg-white/5'
-                                            }`}
-                                    >
-                                        <Calendar size={24} className={durationType === 'weekly' ? 'text-[#06b6d4]' : 'text-gray-500'} />
-                                        <span className="font-bold text-sm">Semanal (7 dias)</span>
-                                    </button>
+                                        icon={Calendar}
+                                        title="Semanal (7 dias)"
+                                        description="Cronograma completo para a semana."
+                                        color="purple"
+                                        layout="compact"
+                                    />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Focus Selection */}
-                                <div className="rounded-2xl p-5" style={{ background: '#1F2937' }}>
+                                <div className="rounded-2xl p-5 border border-white/5" style={{ background: '#1F2937' }}>
                                     <p className="text-sm text-gray-400 mb-4 font-medium">Foco Muscular</p>
-                                    <div className="grid grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-3 gap-3">
                                         {focusOptions.map((focus) => (
-                                            <button
+                                            <SelectionCard
                                                 key={focus.id}
+                                                selected={aiFocus === focus.id}
                                                 onClick={() => setAiFocus(focus.id)}
-                                                className={`flex flex-col items-center gap-2 py-4 px-2 rounded-xl border transition-all min-h-[80px] ${aiFocus === focus.id
-                                                    ? 'border-[#06b6d4] bg-[#06b6d4]/10 text-[#06b6d4]'
-                                                    : 'border-gray-600 text-gray-400 hover:border-gray-500 hover:bg-white/5'
-                                                    }`}
-                                                style={aiFocus === focus.id ? {
-                                                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.2)'
-                                                } : {}}
-                                            >
-                                                <focus.icon size={24} strokeWidth={1.5} />
-                                                <span className="text-xs font-medium">{focus.label}</span>
-                                            </button>
+                                                icon={focus.icon}
+                                                title={focus.label}
+                                                color="cyan"
+                                                layout="vertical"
+                                            />
                                         ))}
                                     </div>
                                 </div>
@@ -419,20 +489,23 @@ function WorkoutPageContent() {
                                 </div>
 
                                 {/* Intensity Selection */}
-                                <div className="rounded-2xl p-5" style={{ background: '#1F2937' }}>
+                                <div className="rounded-2xl p-5 border border-white/5" style={{ background: '#1F2937' }}>
                                     <p className="text-sm text-gray-400 mb-4 font-medium">Nível de Intensidade</p>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-3">
                                         {intensityOptions.map((intensity) => (
-                                            <button
+                                            <SelectionCard
                                                 key={intensity.id}
+                                                selected={aiIntensity === intensity.id}
                                                 onClick={() => setAiIntensity(intensity.id as any)}
-                                                className={`py-3 px-4 rounded-xl text-sm font-medium border transition-all min-h-[44px] ${aiIntensity === intensity.id
-                                                    ? 'border-[#3b82f6] bg-[#3b82f6]/10 text-[#3b82f6]'
-                                                    : 'border-gray-600 text-gray-400 hover:border-gray-500 hover:bg-white/5'
-                                                    }`}
-                                            >
-                                                {intensity.label}
-                                            </button>
+                                                title={intensity.label}
+                                                color={intensity.id === 'advanced' ? 'orange' : 'blue'}
+                                                layout="compact"
+                                                description={
+                                                    intensity.id === 'beginner' ? 'Para quem está começando' :
+                                                        intensity.id === 'intermediate' ? 'Desafio equilibrado' :
+                                                            'Prepare-se para suar!'
+                                                }
+                                            />
                                         ))}
                                     </div>
                                 </div>
