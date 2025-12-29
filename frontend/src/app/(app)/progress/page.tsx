@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MuscleHeatmap } from '@/components/ui/MuscleHeatmap';
 import { CalorieChart } from '@/components/ui/CalorieChart';
+import { RecoveryStatusWidget } from '@/components/progress/RecoveryStatusWidget';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -443,80 +444,8 @@ export default function ProgressPage() {
         return h > 0 ? `${h}h ${m}m` : `${m}m`;
     };
 
-    const getRecoveryStatus = (lastTrained?: Date) => {
-        if (!lastTrained) return {
-            label: 'Disponível',
-            color: '#10B981',
-            bgColor: 'bg-green-500',
-            icon: Battery,
-            value: 100,
-            gradient: 'from-green-500 to-emerald-600'
-        };
-
-        const now = new Date();
-        const diffHours = (now.getTime() - lastTrained.getTime()) / (1000 * 60 * 60);
-
-        // More granular recovery calculation
-        if (diffHours < 12) return {
-            label: 'Fadiga Extrema',
-            color: '#DC2626',
-            bgColor: 'bg-red-600',
-            icon: BatteryLow,
-            value: Math.max(5, Math.round((diffHours / 12) * 10)),
-            gradient: 'from-red-600 to-red-700'
-        };
-        if (diffHours < 24) return {
-            label: 'Fadiga Alta',
-            color: '#EF4444',
-            bgColor: 'bg-red-500',
-            icon: BatteryLow,
-            value: Math.round(10 + (diffHours - 12) / 12 * 20),
-            gradient: 'from-red-500 to-orange-600'
-        };
-        if (diffHours < 48) return {
-            label: 'Recuperando',
-            color: '#F59E0B',
-            bgColor: 'bg-orange-500',
-            icon: BatteryMedium,
-            value: Math.round(30 + (diffHours - 24) / 24 * 30),
-            gradient: 'from-orange-500 to-yellow-500'
-        };
-        if (diffHours < 72) return {
-            label: 'Quase Pronto',
-            color: '#3B82F6',
-            bgColor: 'bg-blue-500',
-            icon: Battery,
-            value: Math.round(60 + (diffHours - 48) / 24 * 30),
-            gradient: 'from-blue-500 to-cyan-500'
-        };
-        return {
-            label: 'Recuperado',
-            color: '#10B981',
-            bgColor: 'bg-green-500',
-            icon: Zap,
-            value: 100,
-            gradient: 'from-green-500 to-emerald-600'
-        };
-    };
-
-    const getRelativeTime = (date?: Date) => {
-        if (!date) return 'Nunca';
-
-        const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffDays = Math.floor(diffHours / 24);
-
-        if (diffHours < 1) return 'Agora mesmo';
-        if (diffHours < 24) return `há ${diffHours}h`;
-        if (diffDays === 1) return 'Ontem';
-        if (diffDays < 7) return `há ${diffDays} dias`;
-        if (diffDays < 30) return `há ${Math.floor(diffDays / 7)} semanas`;
-        return `há ${Math.floor(diffDays / 30)} meses`;
-    };
-
-    // Calculate chart scaling
-    const maxVolume = Math.max(...weekData.map(d => d.volume), 100); // Minimum scale to avoid flatline at 0
+    // Charts scaling optimization
+    const maxVolume = Math.max(...weekData.map(d => d.volume), 100);
 
     return (
         <div className="min-h-screen flex" style={{ background: '#0B0E14' }}>
@@ -687,109 +616,7 @@ export default function ProgressPage() {
 
                         {/* Muscle Status & Recovery */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="bg-[#1F2937] p-6 rounded-3xl border border-white/5">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="font-bold text-white text-lg flex items-center gap-2">
-                                        <Zap className="text-yellow-500" size={20} />
-                                        Status de Recuperação
-                                    </h3>
-                                    <div className="group relative">
-                                        <Info size={16} className="text-gray-500 hover:text-blue-400 cursor-help transition-colors" />
-                                        <div className="absolute right-0 top-6 w-64 bg-[#111318] border border-white/10 rounded-xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 shadow-xl">
-                                            <p className="text-xs text-gray-300 leading-relaxed">
-                                                <span className="font-bold text-white">Como funciona:</span><br />
-                                                • &lt;12h: Fadiga Extrema<br />
-                                                • 12-24h: Fadiga Alta<br />
-                                                • 24-48h: Recuperando<br />
-                                                • 48-72h: Quase Pronto<br />
-                                                • &gt;72h: Recuperado
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    {muscleData.length > 0 ? muscleData.slice(0, 6).map((m, i) => {
-                                        const status = getRecoveryStatus(m.lastTrained);
-                                        const relativeTime = getRelativeTime(m.lastTrained);
-                                        return (
-                                            <div
-                                                key={i}
-                                                className="group relative bg-[#111318] hover:bg-[#1a1d24] p-4 rounded-xl border border-white/5 hover:border-white/10 transition-all duration-300"
-                                            >
-                                                <div className="flex items-center gap-4">
-                                                    {/* Muscle Name & Date */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <p className="text-white font-semibold text-sm">{m.muscle}</p>
-                                                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-medium">
-                                                                {m.sessions}x
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-xs text-gray-500 font-medium">
-                                                            {relativeTime}
-                                                            {m.lastTrained && (
-                                                                <span className="ml-2 text-gray-600">
-                                                                    • {new Date(m.lastTrained).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                                                                </span>
-                                                            )}
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Progress Bar */}
-                                                    <div className="flex-1">
-                                                        <div className="h-3 w-full bg-black/40 rounded-full overflow-hidden relative">
-                                                            <div
-                                                                className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${status.gradient}`}
-                                                                style={{
-                                                                    width: `${status.value}%`,
-                                                                }}
-                                                            >
-                                                                <div className="h-full w-full bg-gradient-to-r from-white/20 to-transparent animate-pulse" />
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-[10px] text-gray-600 mt-1 text-right font-medium">
-                                                            {status.value}% recuperado
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Status Badge */}
-                                                    <div className="flex items-center gap-2 w-36 justify-end">
-                                                        <status.icon size={18} style={{ color: status.color }} className="flex-shrink-0" />
-                                                        <span className="text-xs font-bold whitespace-nowrap" style={{ color: status.color }}>
-                                                            {status.label}
-                                                        </span>
-                                                    </div>
-                                                </div>
-
-                                                {/* Tooltip on hover */}
-                                                <div className="absolute left-0 top-full mt-2 w-full bg-[#0B0E14] border border-white/10 rounded-xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 shadow-xl">
-                                                    <div className="grid grid-cols-3 gap-3 text-xs">
-                                                        <div>
-                                                            <p className="text-gray-500 mb-1">Volume</p>
-                                                            <p className="text-white font-bold">{formatMetrics(m.volume)}</p>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-gray-500 mb-1">Séries</p>
-                                                            <p className="text-white font-bold">{m.sets}</p>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-gray-500 mb-1">Treinos</p>
-                                                            <p className="text-white font-bold">{m.sessions}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    }) : (
-                                        <div className="text-center py-12 text-gray-500 text-sm bg-[#111318] rounded-xl border border-white/5">
-                                            <Battery size={32} className="mx-auto mb-3 text-gray-600" />
-                                            <p className="font-medium">Treine para ver o status dos músculos</p>
-                                            <p className="text-xs text-gray-600 mt-1">Complete um treino para começar a monitorar sua recuperação</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <RecoveryStatusWidget muscleData={muscleData} />
 
                             <div className="bg-[#1F2937] p-6 rounded-3xl border border-white/5">
                                 <h3 className="font-bold text-white text-lg mb-6 flex items-center gap-2">
