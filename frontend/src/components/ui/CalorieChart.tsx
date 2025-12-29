@@ -16,19 +16,11 @@ interface CalorieChartProps {
 }
 
 export function CalorieChart({ data, totalCalories, className = '' }: CalorieChartProps) {
-    const [animated, setAnimated] = useState(false);
-
-    useEffect(() => {
-        // Trigger animation after mount
-        const timer = setTimeout(() => setAnimated(true), 100);
-        return () => clearTimeout(timer);
-    }, []);
-
     const maxCalories = Math.max(...data.map(d => d.calories), 500); // Min scale 500
 
     return (
         <div className={`bg-[#1F2937] p-6 rounded-3xl border border-white/5 ${className}`}>
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex justify-between items-start mb-6">
                 <div>
                     <h3 className="font-bold text-white text-lg flex items-center gap-2 mb-1">
                         <Flame className="text-orange-500 fill-orange-500" size={20} />
@@ -47,50 +39,69 @@ export function CalorieChart({ data, totalCalories, className = '' }: CalorieCha
             </div>
 
             {/* Chart Area */}
-            <div className="flex items-end justify-between h-48 gap-2">
-                {data.map((item, index) => {
-                    const heightPercentage = (item.calories / maxCalories) * 100;
-                    const isToday = new Date().toISOString().startsWith(item.date); // Simple check, assuming ISO strings match
+            <div className="relative h-48 w-full mt-4">
+                {totalCalories > 0 ? (
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="calorieGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#f97316" stopOpacity="0.5" />
+                                <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
 
-                    return (
-                        <div key={index} className="flex-1 flex flex-col items-center gap-3 group relative">
-                            {/* Tooltip */}
-                            <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md whitespace-nowrap z-10 pointer-events-none">
-                                {item.calories} kcal
-                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-orange-500 rotate-45" />
-                            </div>
+                        {/* Grid Lines */}
+                        <line x1="0" y1="25" x2="100" y2="25" stroke="#ffffff10" strokeWidth="0.5" />
+                        <line x1="0" y1="50" x2="100" y2="50" stroke="#ffffff10" strokeWidth="0.5" />
+                        <line x1="0" y1="75" x2="100" y2="75" stroke="#ffffff10" strokeWidth="0.5" />
 
-                            {/* Bar Container */}
-                            <div className="w-full relative h-full flex items-end justify-center">
-                                {/* Bar Track */}
-                                <div className="absolute bottom-0 w-2 lg:w-3 h-full bg-white/5 rounded-full" />
+                        {/* Area Path */}
+                        <path
+                            d={`M 0,100 ${data.map((d, i) =>
+                                `L ${(i / (data.length - 1)) * 100},${100 - (d.calories / maxCalories) * 90}`
+                            ).join(' ')} L 100,100 Z`}
+                            fill="url(#calorieGradient)"
+                        />
 
-                                {/* Active Bar */}
-                                <div
-                                    className={`w-2 lg:w-3 rounded-full relative transition-all duration-1000 ease-out ${isToday
-                                            ? 'bg-gradient-to-t from-orange-600 to-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.5)]'
-                                            : 'bg-white/10 group-hover:bg-orange-500/80'
-                                        }`}
-                                    style={{
-                                        height: animated ? `${Math.max(heightPercentage, 0)}%` : '0%',
-                                    }}
-                                >
-                                    {/* Top Glow/Cap */}
-                                    {item.calories > 0 && (
-                                        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full aspect-square rounded-full ${isToday ? 'bg-orange-300' : 'bg-white/30'
-                                            }`} />
-                                    )}
-                                </div>
-                            </div>
+                        {/* Line Path */}
+                        <path
+                            d={`M 0,${100 - (data.length > 0 ? (data[0].calories / maxCalories) * 90 : 0)} ${data.map((d, i) =>
+                                `L ${(i / (data.length - 1)) * 100},${100 - (d.calories / maxCalories) * 90}`
+                            ).join(' ')}`}
+                            fill="none"
+                            stroke="#f97316"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
 
-                            {/* Label */}
-                            <span className={`text-[10px] font-bold uppercase ${isToday ? 'text-orange-500' : 'text-gray-500'
-                                }`}>
-                                {item.day}
-                            </span>
-                        </div>
-                    );
-                })}
+                        {/* Points */}
+                        {data.map((d, i) => (
+                            <circle
+                                key={i}
+                                cx={(i / (data.length - 1)) * 100}
+                                cy={100 - (d.calories / maxCalories) * 90}
+                                r="2"
+                                className="fill-[#1F2937] stroke-orange-500 transition-all duration-300 hover:r-4 hover:fill-orange-500"
+                                strokeWidth="1.5"
+                            >
+                                <title>{d.calories} kcal</title>
+                            </circle>
+                        ))}
+                    </svg>
+                ) : (
+                    <div className="h-full flex items-center justify-center text-gray-600 text-sm">
+                        Sem dados de calorias esta semana
+                    </div>
+                )}
+            </div>
+
+            {/* X Axis Labels */}
+            <div className="flex justify-between mt-4">
+                {data.map((d, i) => (
+                    <span key={i} className="text-[10px] uppercase text-gray-500 font-medium text-center w-8">
+                        {d.day}
+                    </span>
+                ))}
             </div>
         </div>
     );
